@@ -1,0 +1,197 @@
+//                                  URL SHORTENER
+
+we will design a project related to URL shortener. This project will have the following features:
+url shortener takes  a valid URL and returns a shortened URL, redirecting the user to the previously provided URL.
+
+this will also keep track of total visits/ clicks on the URL.
+
+in this URL routes are present which are:
+
+->POST / URL - generates a new short URL and returns the shortened URL in the format example.com/random-id.
+
+->GET /:ID - redirects the userto the original URL.
+
+-> GET / URL / analytics/:id - returns the clicks for the provided short id.
+
+for example: there is a website named bitly which is used to short any given URL for eg we visit any random website
+and we want to share it with our friends but the URL is too long so we use bitly to shorten it and then we can share it with our friends
+suppose we visit website wikipedia and then we copy the url of wikipedia website and then paste it on bitly 
+then bitly will generate a short url for this wikipedia website that we provide to it and the url that is given 
+by bitly will be much shorter than the original url of wikipedia website and we can simply visit to the wikipedia
+website by using this short url.
+
+
+
+File Name	Kaam
+index.js	Project ka main file (server start yahi se hota hai)
+connect.js	MongoDB se connect hone wali file
+models/url.js	MongoDB schema (structure) batata hai
+controllers/url.js	Logic yahin likha hai (short link banana, analytics nikalna)
+routes/url.js	Routes define karta hai (kaunsa URL pe kya kaam hoga)
+
+
+
+//                    STORY OF URL SHORTENER AND EXECUTION PROCESS
+
+
+🟢 STEP 1: Server Start Hota Hai (index.js)
+Tum node index.js ya npm start likh ke server start karte ho. Yeh execution ki pehli ghanti hai.
+
+1.1 Express Load Hota Hai
+const express = require("express");
+➡️ Express ek web framework hai Node.js ka — iske through hum routes, middleware, and servers handle karte hain.
+
+1.2 MongoDB Connection Function Import
+const { connect_mongodb } = require("./connect");
+➡️ Tumne connect.js file mein ek function banaya tha MongoDB se connect hone ka. Wo yahan import ho raha hai.
+
+1.3 Route & Model Import
+const url_route = require("./routes/url");
+const URL = require("./models/url");
+➡️ url_route: Yeh wo route file hai jahan par tumne POST / aur GET /analytics/:short_id define kiye hain.
+➡️ URL: Yeh MongoDB model hai jiska schema define kiya gaya hai — iska kaam database mein data save/lookup/update karna hoga.
+
+1.4 Server Initialization
+const app = express();
+app.use(express.json());
+➡️ Ab express() se app ka object bana.
+➡️ express.json() ek middleware hai jo incoming JSON body ko parse karega — bina iske, req.body undefined hoga.
+
+1.5 MongoDB Se Connection
+connect_mongodb("mongodb://localhost:27017/short-url")
+    .then(() => console.log("mongo db connected"));
+➡️ connect.js ki file execute hoti hai:
+
+[Jump to File 2: connect.js]
+const mongoose=require("mongoose");
+
+async function connect_mongodb(url) {
+    return mongoose.connect(url);
+}
+➡️ Ye function mongoose.connect() ko call karta hai — ab tumhara app MongoDB ke short-url naam ke database se jud gaya.
+
+1.6 Routes Register
+app.use("/url", url_route);
+➡️ Ab jab bhi koi request /url se start hogi, control chala jaayega routes/url.js file mein.
+
+[Jump to File 5: routes/url.js]
+const { handle_gen_new_shorturl, handle_get_analytics } = require("../controllers/url");
+
+const router = express.Router();
+router.post("/", handle_gen_new_shorturl);
+router.get("/analytics/:short_id", handle_get_analytics);
+➡️ POST /url/ ke liye handle_gen_new_shorturl() chalega
+➡️ GET /url/analytics/:short_id ke liye handle_get_analytics() chalega
+
+Ye dono functions kahaan se aaye? — Controllers se.
+
+[Jump to File 3: controllers/url.js]
+🔵 STEP 2: Client Sends POST Request to Create Short URL
+Jaise hi client (ya postman) POST request bhejta hai:
+
+POST /url
+Body: {
+  "url": "https://www.google.com"
+}
+2.1 Controller Trigger
+handle_gen_new_shorturl(req, res) execute hota hai.
+2.2 Inside handle_gen_new_shorturl
+const body = req.body;
+if (!body.url)
+    return res.status(400).json({ error: "url is required" });
+➡️ Agar user ne url hi nahi diya toh error de do.
+2.3 Generate Short ID
+const cr_short_id = nanoid(8);
+➡️ Ek 8-character ka unique short_id banta hai — jise hum abc123xy maan lete hain.
+
+2.4 MongoDB me Save Karo
+await URL.create({
+  short_id: cr_short_id,
+  redirect_url: body.url,
+  visit_history: [],
+});
+[Jump to File 4: models/url.js]
+const mongoose = require("mongoose");
+
+const urlSchema = new mongoose.Schema({
+  short_id: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  redirect_url: {
+    type: String,
+    required: true,
+  },
+  visit_history: [{ timestamp: { type: Number } }],
+});
+module.exports = mongoose.model("url", urlSchema);
+➡️ Ek new MongoDB document create hota hai:
+{
+  short_id: "abc123xy",
+  redirect_url: "https://www.google.com",
+  visit_history: []
+}
+2.5 Client ko Short ID Response
+return res.json({ id: cr_short_id });
+➡️ Client ko milta hai:
+{ "id": "abc123xy" }
+
+
+🟠 STEP 3: Client Enters Shortened URL (GET /abc123xy)
+Jaise hi koi browser me likhta hai:
+http://localhost:8001/abc123xy
+3.1 Server receives GET "/:short_id"
+app.get("/:short_id", async (req,res)=>{
+  const short_id = req.params.short_id;})
+  
+➡️ URL me jo bhi last part hai (e.g., abc123xy) wo extract ho gaya.
+
+3.2 Database me Short ID Dhoondo
+
+const entry = await URL.findOneAndUpdate(
+  { short_id },
+  {
+    $push: {
+      visit_history: {
+        timestamp: Date.now(),
+      },
+    },
+  }
+);
+
+➡️ MongoDB se wo record dhoondha jaata hai jiska short_id = abc123xy
+➡️ Aur uske visit_history me ek naya entry add hota hai — current time ka timestamp.
+
+3.3 Redirect to Original URL
+res.redirect(entry.redirect_url);
+➡️ Jaise hi match milta hai, user ko redirect kar diya jaata hai https://www.google.com par.
+
+🔴 STEP 4: Analytics Dekhna (GET /url/analytics/abc123xy)
+Client ya admin call karta hai:
+GET /url/analytics/abc123xy
+
+4.1 Route Trigger
+router.get("/analytics/:short_id", handle_get_analytics);
+
+4.2 Controller Function
+
+const short_id = req.params.short_id;
+const result = await URL.findOne({ short_id });
+return res.json({
+  total_clicks: result.visit_history.length,
+  analytics: result.visit_history,
+});
+
+➡️ MongoDB se data fetch hota hai
+➡️ Kitni baar link pe click hua — uska count (visit_history.length)
+➡️ Kab kab click hua — uska record (analytics: [...])
+
+
+🔚 Final Kahaani Summary (Story Flow Recap):
+
+Phase	Event	File	Function
+🟢 Start	            Server Boot                  	     index.js	               connect_mongodb()
+🔵 URL Shorten         	Client POST /url	                 controllers/url.js	       handle_gen_new_shorturl()
+🟠 Visit Short URL	    Client GET /:short_id	             index.js	               inline function
+🔴 Analytics	        Client GET /url/analytics/:id    	 controllers/url.js	       handle_get_analytics()

@@ -1,0 +1,80 @@
+//                                AUTHENTICATION
+
+Authentication are of two patterns:
+
+-> STATEFULL  AUTHENTICATION                ->STATELESS AUTHENTICATION
+
+->STATEFULL AUTHENTICATION:
+this maintains state or data on server side.
+
+->STATELESS AUTHENTICATION
+this has no state
+
+now lets learn about statefull authentication: from a real world scenario
+when we go to mall or any other complexe then we have to park our car in parking lot. so in the parking area there
+is a parking boy who have all the details about parking vehicles. so when we park our car then that boy gives us a 
+ticket and in that ticket there is some detail about our car and parking number and that ticket is our identity
+and parking boy also have all the details about each and every car that are parket in the parking area. they have
+all the details that which car is parked and each car have thier own parking number with the help of which parking
+boy identify which car have which parking number. so this is the realworld scenario of stateless authentication 
+as parking boy have all the details in thier register that which car have which parking number.
+
+now we see this statefull authentication in case of server and client
+//                                AUTHENTICATION
+
+/**
+ * Authentication Patterns
+ * 
+ * There are two primary patterns of authentication:
+ * 
+ * 1. Stateful Authentication
+ * 2. Stateless Authentication
+ */
+
+// STATEFUL AUTHENTICATION
+// This pattern maintains state or data on the server side.
+
+// STATELESS AUTHENTICATION
+// This pattern has no state.
+
+// Real-World Scenario: Stateful Authentication
+// 
+// When you park your car in a parking lot, you receive a ticket with details about your car and parking number.
+// The parking attendant maintains a record of all parked vehicles, including their parking numbers.
+// This is similar to stateful authentication, where the server maintains a record of user sessions.
+
+// Stateful Authentication in Server-Client Communication
+// 
+// When a client logs in to their Facebook account, they provide their username and password to the server.
+// The server responds with a unique session ID, which is stored on both the client and server sides.
+// For subsequent requests, the client must provide the session ID to the server, which verifies its validity before responding.
+
+// Example: Client-Server Communication
+// 
+// Client (username/password) ------> Server
+// Server ------> Client (session ID)
+// Client (session ID) ------> Server (request)
+// Server ------> Client (response)
+suppose there is a client who want to login thier facebook account, for logging in they have to give thier 
+username and password to the server when server get this then it will provide unique session uid to the client
+and this session uid is also stored in the server. so whenever client want any request(get, put) then they must 
+have to show this session id to the server then server check that the session id that is shown by the client is 
+in thier server side or not, if it is present then server will provide the data(response) to the client otherwise
+it will not.
+ 
+//                              username / password
+//                   client ------------------------------------------------> server
+//                          <------------------------------------------------            
+//                                                               session uid
+
+this session uid is provided by server to client in different forms like: cookies, response and headers.
+like in ejs where we directly connect with server then in that case we generally use cookies and in rest api's
+we use headers.
+
+
+//
+//
+//   client --------------------------------------> auth middleware -----------------------> endpoint route
+//          checks for cookie value or uid, if                       
+//          valid calls next() else rejects the 
+//                     request.

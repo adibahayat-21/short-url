@@ -1,0 +1,9 @@
+//                            SERVER SIDE RENDERING
+
+server side rendering means that our html page or web page is rendered by server for eg: we write like this 
+app.get("test",(req,res)=>{
+    return res.end("<h1>Hey from server</h1>");
+})
+
+so when we write this above line in our file anbd then we open localhost in browser then we find that web page
+it is written hey from server.

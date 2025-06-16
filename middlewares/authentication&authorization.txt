@@ -1,0 +1,25 @@
+//                       Difference between authentication and authorization
+
+AUTHENTICATION:
+simple means of authentication is authenticate any user (login the user), they knows that the particular user 
+is belongs to particular application.
+
+Example: When a user logs in to a website with their credentials (e.g., username and password), the system verifies
+the credentials and authenticates the user. Once authenticated, the system knows that the user is legitimate.
+
+
+
+AUTHORIZATION:
+authorization means check the user if it is authorized to particular application or not.
+for eg: if you want anywhere like you want to go inside a club and you have a membership of that then you are 
+able to go inside it then it means you are authenticated to it but there are certain places (like:kitchen of that club)
+where only admins are able to go then we can say that admins are authorized to thier particular place 
+
+Example: After logging into a system (authentication), you may be allowed to access your personal account or view certain 
+pages, but there could be restricted areas that only specific users (e.g., admins) can access. This permission to access 
+certain resources is authorization.
+
+Real-Life Example: You are authenticated to enter a club based on your membership (authentication). However, authorization
+determines whether you can access specific areas, like the VIP lounge or kitchen. Only authorized users (e.g., club admins 
+or staff) have permission to enter restricted areas.
+

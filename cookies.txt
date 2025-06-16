@@ -1,0 +1,38 @@
+//                                      TOKENS 
+
+here we see that how token is created:
+there is a user and client so suppose user is entering thier password and username then this detail goes to the 
+server then server will check to the database that if there any username or password exist or it is correct
+if it is exist or correct then the server will make token of it which contains all the details like:
+there id, name, and email.so the token is created and the main thing is that server have to send this token 
+to the client in secure way.
+
+so there are two ways to send this token in secure way which is:
+-> through cookies                ->through response 
+
+
+->through cookies 
+
+so when the server use cookies to send the token then the server created a cookie which contains the token
+(that is created earlier which have to send to the client) and the uid. so this cookie is send to the client
+and then the browser save this cookie becuse it is a default behaviour of browser to save cookie.
+
+now whenever the user want to send any request then this cookie will automatically go along with them.
+suppose the user is requesting then cookie is going along with them then the server will check the cookie
+and take the token from it to check that if that cookie contains the uid or not if the uid is not present then
+it means the user is logged out and if the uid is present then it will check the whole details from the token 
+if the detail is matched from the details that it have (because the detail is provided by the server itself initially
+at the time of making token) after matching the details then the server will be able to identify that the 
+request is coming from which user.
+
+
+Main thing:
+Cookie is domain specific it means-
+suppose there is a user who is logging to facebook and it goes to facebook website then the facebook will make
+cookie for that user and let's assume facebook is making 2 cookies for user.
+and then the user will go to another website like wikipedia then wikipedia will send another 2 cookie for that 
+user then whenever user want to go to that particular site then only that cookie is used which is send by that
+particular website. means when user again logging to the facebook then only that 2 cookie is used which is send 
+by facebook and when user go to wikipedia website then only that cookie is used which is sent by wikipedia.
+this shows the concept that cookie is domain specific.
+

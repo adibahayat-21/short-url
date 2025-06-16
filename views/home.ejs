@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="/index.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+</head>
+<body>
+  <nav>
+    <a href="/">Home</a>
+    <a href="/login">Login</a>
+    <a href="/signup">Signup</a>
+  </nav>
+  <h1>URL SHORTENER</h1>
+  <% if(locals.id) { %>
+    <p> URL generated: http://localhost:8001/url/<%=id%></p>
+  <% } %>
+
+  <div>
+    <form method="POST" action="/url">
+        <label>Enter your original URL:</label>
+        <input type="text" name="url" placeholder="https://example.com"/>
+        <button type="submit">Generate</button>
+    </form>
+  </div>
+
+  <div>
+    <% if(locals.urls){ %>
+        <table>
+            <thead>
+                <tr>
+                <th>S.No</th>
+                <th>Short_ID</th>
+                <th>Redirect</th>
+                <th>Clicks</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% urls.forEach((url,index)=>{ %>
+                    <tr>
+                      <td><%=index+1%></td>
+                      <td><%=url.short_id%></td>
+                      <td><%=url.redirect_url%></td>
+                      <td><%=url.visit_history.length%></td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    <% } %>
+  </div>
+</body>
+</html>

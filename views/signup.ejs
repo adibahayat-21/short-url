@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <link rel="stylesheet" href="/index.css" />
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content=""IE=edge />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup</title>
+    <style>
+        nav {
+            margin-bottom: 20px;
+        }
+        nav a {
+            margin-right: 15px;
+            color: cornsilk;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+  <nav>
+    <a href="/">Home</a>
+    <a href="/login">Login</a>
+    <a href="/signup">Signup</a>
+  </nav>
+    <h2>Sign Up here!</h2>
+    <form action="/user" method="post">
+        <label>Enter your full name</label>
+        <input type="text" required name="name">
+        
+        <label>Enter your Email</label>
+        <input type="text" required name="email">
+
+        <label>Enter your Password</label>
+        <input type="text" required name="password">
+
+        <button type="submit">Sign Up</button>
+
+    </form>
+</body>
+</html>
