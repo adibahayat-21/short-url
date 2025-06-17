@@ -24,7 +24,7 @@ const static_route=require("./routes/static_router");
 
 const user_route=require("./routes/users");
 
-const PORT = 8001;
+const PORT = process.env.PORT || 8001;
 
 const app = express();
 app.use(express.json()); // Move this line here to parse JSON request bodies
